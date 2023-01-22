@@ -1,0 +1,56 @@
+// abpoa graph dot file.
+// 10 nodes.
+digraph ABPOA_graph {
+	graph [rankdir="LR"];
+	node [width=1.000000, style=filled, fixedsize=true, shape=circle];
+"S
+0" [color=gray, fontsize=24]
+"C
+1" [color=red1, fontsize=24]
+"G
+2" [color=gold2, fontsize=24]
+"A
+3" [color=pink1, fontsize=24]
+"C
+4" [color=red1, fontsize=24]
+"T
+5" [color=seagreen4, fontsize=24]
+"C
+6" [color=red1, fontsize=24]
+"G
+7" [color=gold2, fontsize=24]
+"A
+8" [color=pink1, fontsize=24]
+"E
+9" [color=gray, fontsize=24]
+	"S
+0" -> "C
+1" [label="4", penwidth=5]
+	"C
+1" -> "G
+2" [label="4", penwidth=5]
+	"G
+2" -> "A
+3" [label="4", penwidth=5]
+	"A
+3" -> "G
+7" [label="3", penwidth=4]
+	"A
+3" -> "C
+4" [label="1", penwidth=2]
+	"C
+4" -> "T
+5" [label="1", penwidth=2]
+	"T
+5" -> "C
+6" [label="1", penwidth=2]
+	"C
+6" -> "G
+7" [label="1", penwidth=2]
+	"G
+7" -> "A
+8" [label="4", penwidth=5]
+	"A
+8" -> "E
+9" [label="4", penwidth=5]
+}

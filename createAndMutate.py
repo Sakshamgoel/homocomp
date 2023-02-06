@@ -7,6 +7,8 @@ Created on Wed Jan 18 16:21:06 2023
 
 import numpy as np
 import pyabpoa as pa
+from skbio.alignment import global_pairwise_align_nucleotide
+from skbio import TabularMSA, DNA
 
 
 np.random.seed(seed=1)
@@ -75,30 +77,80 @@ def compressedPartialOrderAllignment(seqs):
         seqsReadyForPoa.append(seqReady)
         seqCounts.append(seqSingleCount)
         
-    print(seqsReadyForPoa)
-    print(seqCounts)
+    #print(seqsReadyForPoa)
+    #print(seqCounts)
     a = pa.msa_aligner()
     res=a.msa(seqsReadyForPoa, out_cons=True, out_msa=True, out_pog='pog.png', incr_fn='') # perform multiple sequence alignment 
                                                                 # generate a figure of alignment graph to pog.png
+    return(res.cons_seq[0])
+    #for seq in res.cons_seq:
+       # print(seq)
+       
+       
+def pairwiseAlign(seqs, consenSeq):
+    for seq in seqs:
+        alignment = global_pairwise_align_nucleotide(DNA(consenSeq), DNA(seqs[seq][0]))
+        seqs[seq] = seqs[seq] + ([str(alignment[0][0]), str(alignment[0][1])],)
+        print(alignment[0][0])
+        print(alignment[0][1])
+        print("\n\n")
+    return seqs
+    
 
-    for seq in res.cons_seq:
-        print(seq) 
+def expansionMean(toExpandWith, consenSeq):
+    print(consenSeq)
+    print("\n\n\n")
+    print("TO ALLIGN WITH")
+    print(toExpandWith)
+    #x = 0
+    #for base in consenSeq:
+        #count = 0
+        #toDivide = 0
+        #for seq in toExpandWith:
+            #print(toExpandWith[seq][2][x])
+           
+                
+        
+        
     
-seqs=[
-    'CCGAAGA',
-    'CCGAACTCGA',
-    'CCCGGAAGA',
-    'CCGAAGA'
-    ]
-compressedPartialOrderAllignment(seqs)
-    
-    
-    
+
+
+seqs=[]   
 s1 = generate_sequence(100)
-
 s2 = mutate(s1, 0.1, 0.1)
-#print(s1, end = '')
-#print('')
-#print(s2)
-#print('')
-#print(homoCompress(s1))
+s3 = mutate(s1, 0.1, 0.1)
+
+seqs.append(s1)
+seqs.append(s2)
+seqs.append(s3)
+
+poaCompressed = compressedPartialOrderAllignment(seqs)
+
+print("### Sequences Before Compression ###")
+for seq in seqs:
+    print(seq)
+print("\n\n")
+
+print("### Sequences After Compression ###")
+homecompSeqs = {}
+homoId = 0
+for seq in seqs:
+    print(homoCompress(seq)[0])
+    print(homoCompress(seq)[1])
+    homecompSeqs[homoId] = homoCompress(seq)
+    homoId = homoId + 1
+print("\n\n")
+
+
+print("### Consensus Sequence Before Expansion ###")
+print(poaCompressed)
+print("\n\n")
+
+print(seqs)
+print("### GLOBAL PAIRWISE ALIGN ###")
+print("\n\n\n")
+readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
+
+expansionMean(readyForExpansion, poaCompressed)
+
+

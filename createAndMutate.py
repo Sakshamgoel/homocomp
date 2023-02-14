@@ -86,30 +86,74 @@ def compressedPartialOrderAllignment(seqs):
     #for seq in res.cons_seq:
        # print(seq)
        
+def partialOrderAllignment(seqs):
+
+    a = pa.msa_aligner()
+    res=a.msa(seqs, out_cons=True, out_msa=True, out_pog='pog.png', incr_fn='') # perform multiple sequence alignment 
+                                                                # generate a figure of alignment graph to pog.png
+    return(res.cons_seq[0])
+    #for seq in res.cons_seq:
+       # print(seq)
+       
        
 def pairwiseAlign(seqs, consenSeq):
     for seq in seqs:
         alignment = global_pairwise_align_nucleotide(DNA(consenSeq), DNA(seqs[seq][0]))
         seqs[seq] = seqs[seq] + ([str(alignment[0][0]), str(alignment[0][1])],)
-        print(alignment[0][0])
-        print(alignment[0][1])
-        print("\n\n")
     return seqs
     
 
 def expansionMean(toExpandWith, consenSeq):
-    print(consenSeq)
-    print("\n\n\n")
-    print("TO ALLIGN WITH")
-    print(toExpandWith)
-    #x = 0
-    #for base in consenSeq:
-        #count = 0
-        #toDivide = 0
-        #for seq in toExpandWith:
-            #print(toExpandWith[seq][2][x])
-           
+
+    locDict = {}
+    for align in toExpandWith:
+        locArray = []
+        topSeq = toExpandWith[align][2][0]
+        botSeq = toExpandWith[align][2][1]
+        consensusLoc = 0
+        allignLoc = 0
+        while consensusLoc < len(topSeq):
+            if topSeq[consensusLoc] != "-": 
+                if (topSeq[consensusLoc] == botSeq[consensusLoc]): #match
+                    locArray.append(allignLoc)
+                    allignLoc+=1
+                elif botSeq[consensusLoc] == "-": #deletion
+                    locArray.append(-1)
+                else: #mismatch
+                    locArray.append(-1)
+                    allignLoc+=1
+            
+            consensusLoc += 1
+                   
+            
+        locDict[align] = locArray
+
+    finalStr = ""
+    finalArr = []
+    for base in range(len(consenSeq)):
+        numToDivide = 0
+        count = 0
+        for key in locDict:
+            if locDict[key][base] != -1:
                 
+                numToDivide = numToDivide + toExpandWith[key][1][locDict[key][base]]
+                count += 1
+        finalBaseLength = round(numToDivide/count)
+        charCount = 0
+        while charCount < finalBaseLength:
+            finalStr = finalStr + consenSeq[base]
+            charCount+=1
+        
+                
+    return finalStr
+            
+            
+            
+            
+        
+        
+     
+
         
         
     
@@ -145,12 +189,22 @@ print("\n\n")
 print("### Consensus Sequence Before Expansion ###")
 print(poaCompressed)
 print("\n\n")
-
 print(seqs)
+print("\n\n")
 print("### GLOBAL PAIRWISE ALIGN ###")
-print("\n\n\n")
 readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
+print(readyForExpansion)
+print("\n\n")
+print("### MEAN EXPANSION FINAL STRING ###")
+finalMean = expansionMean(readyForExpansion, poaCompressed)
+print(finalMean)
+print("\n\n")
+print("### Partial Order Allignment Without Compression ###")
+poaNonCompressed = partialOrderAllignment(seqs)
+print(poaNonCompressed)
 
-expansionMean(readyForExpansion, poaCompressed)
+
+
+
 
 

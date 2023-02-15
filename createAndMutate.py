@@ -9,6 +9,7 @@ import numpy as np
 import pyabpoa as pa
 from skbio.alignment import global_pairwise_align_nucleotide
 from skbio import TabularMSA, DNA
+import statistics
 
 
 np.random.seed(seed=1)
@@ -100,6 +101,9 @@ def pairwiseAlign(seqs, consenSeq):
     for seq in seqs:
         alignment = global_pairwise_align_nucleotide(DNA(consenSeq), DNA(seqs[seq][0]))
         seqs[seq] = seqs[seq] + ([str(alignment[0][0]), str(alignment[0][1])],)
+        print(alignment[0][0])
+        print(alignment[0][1])
+        print("\n")
     return seqs
     
 
@@ -146,6 +150,101 @@ def expansionMean(toExpandWith, consenSeq):
         
                 
     return finalStr
+
+
+def expansionMedian(toExpandWith, consenSeq):
+
+    locDict = {}
+    for align in toExpandWith:
+        locArray = []
+        topSeq = toExpandWith[align][2][0]
+        botSeq = toExpandWith[align][2][1]
+        consensusLoc = 0
+        allignLoc = 0
+        while consensusLoc < len(topSeq):
+            if topSeq[consensusLoc] != "-": 
+                if (topSeq[consensusLoc] == botSeq[consensusLoc]): #match
+                    locArray.append(allignLoc)
+                    allignLoc+=1
+                elif botSeq[consensusLoc] == "-": #deletion
+                    locArray.append(-1)
+                else: #mismatch
+                    locArray.append(-1)
+                    allignLoc+=1
+            
+            consensusLoc += 1
+                   
+            
+        locDict[align] = locArray
+
+    finalStr = ""
+    finalArr = []
+    for base in range(len(consenSeq)):
+        medianArr = []
+        for key in locDict:
+            if locDict[key][base] != -1:
+                medianArr.append(toExpandWith[key][1][locDict[key][base]])
+        finalBaseLength = statistics.median(medianArr)
+        charCount = 0
+        while charCount < finalBaseLength:
+            finalStr = finalStr + consenSeq[base]
+            charCount+=1
+        
+                
+    return finalStr
+
+
+def expansionMode(toExpandWith, consenSeq):
+
+    locDict = {}
+    for align in toExpandWith:
+        locArray = []
+        topSeq = toExpandWith[align][2][0]
+        botSeq = toExpandWith[align][2][1]
+        consensusLoc = 0
+        allignLoc = 0
+        while consensusLoc < len(topSeq):
+            if topSeq[consensusLoc] != "-": 
+                if (topSeq[consensusLoc] == botSeq[consensusLoc]): #match
+                    locArray.append(allignLoc)
+                    allignLoc+=1
+                elif botSeq[consensusLoc] == "-": #deletion
+                    locArray.append(-1)
+                else: #mismatch
+                    locArray.append(-1)
+                    allignLoc+=1
+            
+            consensusLoc += 1
+                   
+            
+        locDict[align] = locArray
+
+    finalStr = ""
+    finalArr = []
+    for base in range(len(consenSeq)):
+        medianArr = []
+        for key in locDict:
+            if locDict[key][base] != -1:
+                medianArr.append(toExpandWith[key][1][locDict[key][base]])
+        finalBaseLength = statistics.mode(medianArr)
+        charCount = 0
+        while charCount < finalBaseLength:
+            finalStr = finalStr + consenSeq[base]
+            charCount+=1
+        
+                
+    return finalStr
+
+def calcAvgScore(seqs, allignmentToTest):
+    avgToDivide = 0
+    for seq in seqs:
+        alignment = global_pairwise_align_nucleotide(DNA(allignmentToTest), DNA(seq))
+        avgToDivide += alignment[1]
+    finalAverage = avgToDivide/len(seqs)
+    return finalAverage
+
+    
+    
             
             
             
@@ -199,9 +298,39 @@ print("### MEAN EXPANSION FINAL STRING ###")
 finalMean = expansionMean(readyForExpansion, poaCompressed)
 print(finalMean)
 print("\n\n")
+
+print("### MEDIAN EXPANSION FINAL STRING ###")
+finalMedian = expansionMedian(readyForExpansion, poaCompressed)
+print(finalMedian)
+print("\n\n")
+
+print("### MODE EXPANSION FINAL STRING ###")
+finalMode = expansionMode(readyForExpansion, poaCompressed)
+print(finalMode)
+print("\n\n")
+
+
+print("### Average Alignment Score Compressed ###")
+print(seqs)
+avgMean = calcAvgScore(seqs, finalMedian)
+print(avgMean)
+
+
+print("\n\n")
 print("### Partial Order Allignment Without Compression ###")
 poaNonCompressed = partialOrderAllignment(seqs)
 print(poaNonCompressed)
+print(finalMedian)
+
+print("\n\n")
+print("### Average Alignment Score Without Compression ###")
+print(seqs)
+avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
+print(avgMeanNonComp)
+
+
+
+
 
 
 

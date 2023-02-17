@@ -1,5 +1,5 @@
 // abpoa graph dot file.
-// 133 nodes.
+// 31 nodes.
 digraph ABPOA_graph {
 	graph [rankdir="LR"];
 	node [width=1.000000, style=filled, fixedsize=true, shape=circle];
@@ -7,46 +7,46 @@ digraph ABPOA_graph {
 0" [color=gray, fontsize=24]
 "T
 1" [color=seagreen4, fontsize=24]
-"C
-2" [color=red1, fontsize=24]
-"T
-3" [color=seagreen4, fontsize=24]
+"G
+2" [color=gold2, fontsize=24]
 "A
-4" [color=pink1, fontsize=24]
-"A
-5" [color=pink1, fontsize=24]
+3" [color=pink1, fontsize=24]
+"G
+4" [color=gold2, fontsize=24]
+"G
+5" [color=gold2, fontsize=24]
 "T
 6" [color=seagreen4, fontsize=24]
 "C
 7" [color=red1, fontsize=24]
-"T
-8" [color=seagreen4, fontsize=24]
+"A
+8" [color=pink1, fontsize=24]
 "C
 9" [color=red1, fontsize=24]
-"T
-10" [color=seagreen4, fontsize=24]
-"T
-11" [color=seagreen4, fontsize=24]
+"C
+10" [color=red1, fontsize=24]
 "A
-12" [color=pink1, fontsize=24]
-"A
-13" [color=pink1, fontsize=24]
+11" [color=pink1, fontsize=24]
+"C
+12" [color=red1, fontsize=24]
+"T
+13" [color=seagreen4, fontsize=24]
 "C
 14" [color=red1, fontsize=24]
-"A
-15" [color=pink1, fontsize=24]
-"T
-16" [color=seagreen4, fontsize=24]
+"C
+15" [color=red1, fontsize=24]
+"G
+16" [color=gold2, fontsize=24]
 "C
 17" [color=red1, fontsize=24]
-"A
-18" [color=pink1, fontsize=24]
-"G
-19" [color=gold2, fontsize=24]
 "C
-20" [color=red1, fontsize=24]
-"G
-21" [color=gold2, fontsize=24]
+18" [color=red1, fontsize=24]
+"A
+19" [color=pink1, fontsize=24]
+"T
+20" [color=seagreen4, fontsize=24]
+"C
+21" [color=red1, fontsize=24]
 "A
 22" [color=pink1, fontsize=24]
 "G
@@ -55,824 +55,164 @@ digraph ABPOA_graph {
 24" [color=red1, fontsize=24]
 "G
 25" [color=gold2, fontsize=24]
-"A
-26" [color=pink1, fontsize=24]
 "T
-27" [color=seagreen4, fontsize=24]
+26" [color=seagreen4, fontsize=24]
 "A
-28" [color=pink1, fontsize=24]
+27" [color=pink1, fontsize=24]
 "G
-29" [color=gold2, fontsize=24]
+28" [color=gold2, fontsize=24]
 "T
-30" [color=seagreen4, fontsize=24]
-"A
-31" [color=pink1, fontsize=24]
-"C
-32" [color=red1, fontsize=24]
-"C
-33" [color=red1, fontsize=24]
-"G
-34" [color=gold2, fontsize=24]
-"G
-35" [color=gold2, fontsize=24]
-"A
-36" [color=pink1, fontsize=24]
-"A
-37" [color=pink1, fontsize=24]
-"C
-38" [color=red1, fontsize=24]
-"T
-39" [color=seagreen4, fontsize=24]
-"G
-40" [color=gold2, fontsize=24]
-"T
-41" [color=seagreen4, fontsize=24]
-"C
-42" [color=red1, fontsize=24]
-"C
-43" [color=red1, fontsize=24]
-"A
-44" [color=pink1, fontsize=24]
-"T
-45" [color=seagreen4, fontsize=24]
-"G
-46" [color=gold2, fontsize=24]
-"C
-47" [color=red1, fontsize=24]
-"G
-48" [color=gold2, fontsize=24]
-"A
-49" [color=pink1, fontsize=24]
-"A
-50" [color=pink1, fontsize=24]
-"G
-51" [color=gold2, fontsize=24]
-"T
-52" [color=seagreen4, fontsize=24]
-"C
-53" [color=red1, fontsize=24]
-"C
-54" [color=red1, fontsize=24]
-"C
-55" [color=red1, fontsize=24]
-"T
-56" [color=seagreen4, fontsize=24]
-"T
-57" [color=seagreen4, fontsize=24]
-"C
-58" [color=red1, fontsize=24]
-"C
-59" [color=red1, fontsize=24]
-"G
-60" [color=gold2, fontsize=24]
-"C
-61" [color=red1, fontsize=24]
-"C
-62" [color=red1, fontsize=24]
-"A
-63" [color=pink1, fontsize=24]
-"A
-64" [color=pink1, fontsize=24]
-"C
-65" [color=red1, fontsize=24]
-"T
-66" [color=seagreen4, fontsize=24]
-"A
-67" [color=pink1, fontsize=24]
-"A
-68" [color=pink1, fontsize=24]
-"C
-69" [color=red1, fontsize=24]
-"T
-70" [color=seagreen4, fontsize=24]
-"T
-71" [color=seagreen4, fontsize=24]
-"G
-72" [color=gold2, fontsize=24]
-"C
-73" [color=red1, fontsize=24]
-"A
-74" [color=pink1, fontsize=24]
-"G
-75" [color=gold2, fontsize=24]
-"G
-76" [color=gold2, fontsize=24]
-"T
-77" [color=seagreen4, fontsize=24]
-"T
-78" [color=seagreen4, fontsize=24]
-"T
-79" [color=seagreen4, fontsize=24]
-"T
-80" [color=seagreen4, fontsize=24]
-"G
-81" [color=gold2, fontsize=24]
-"C
-82" [color=red1, fontsize=24]
-"A
-83" [color=pink1, fontsize=24]
-"C
-84" [color=red1, fontsize=24]
-"C
-85" [color=red1, fontsize=24]
-"T
-86" [color=seagreen4, fontsize=24]
-"A
-87" [color=pink1, fontsize=24]
-"G
-88" [color=gold2, fontsize=24]
-"C
-89" [color=red1, fontsize=24]
-"A
-90" [color=pink1, fontsize=24]
-"C
-91" [color=red1, fontsize=24]
-"A
-92" [color=pink1, fontsize=24]
-"C
-93" [color=red1, fontsize=24]
-"T
-94" [color=seagreen4, fontsize=24]
-"A
-95" [color=pink1, fontsize=24]
-"C
-96" [color=red1, fontsize=24]
-"G
-97" [color=gold2, fontsize=24]
-"A
-98" [color=pink1, fontsize=24]
-"A
-99" [color=pink1, fontsize=24]
-"C
-100" [color=red1, fontsize=24]
-"C
-101" [color=red1, fontsize=24]
-"T
-102" [color=seagreen4, fontsize=24]
-"C
-103" [color=red1, fontsize=24]
-"A
-104" [color=pink1, fontsize=24]
-"G
-105" [color=gold2, fontsize=24]
-"T
-106" [color=seagreen4, fontsize=24]
-"T
-107" [color=seagreen4, fontsize=24]
-"C
-108" [color=red1, fontsize=24]
-"G
-109" [color=gold2, fontsize=24]
-"A
-110" [color=pink1, fontsize=24]
-"A
-111" [color=pink1, fontsize=24]
-"G
-112" [color=gold2, fontsize=24]
-"T
-113" [color=seagreen4, fontsize=24]
-"C
-114" [color=red1, fontsize=24]
-"T
-115" [color=seagreen4, fontsize=24]
-"G
-116" [color=gold2, fontsize=24]
-"T
-117" [color=seagreen4, fontsize=24]
-"T
-118" [color=seagreen4, fontsize=24]
-"G
-119" [color=gold2, fontsize=24]
-"C
-120" [color=red1, fontsize=24]
-"A
-121" [color=pink1, fontsize=24]
-"A
-122" [color=pink1, fontsize=24]
-"G
-123" [color=gold2, fontsize=24]
-"C
-124" [color=red1, fontsize=24]
-"T
-125" [color=seagreen4, fontsize=24]
-"T
-126" [color=seagreen4, fontsize=24]
-"G
-127" [color=gold2, fontsize=24]
-"T
-128" [color=seagreen4, fontsize=24]
-"C
-129" [color=red1, fontsize=24]
-"A
-130" [color=pink1, fontsize=24]
-"T
-131" [color=seagreen4, fontsize=24]
+29" [color=seagreen4, fontsize=24]
 "E
-132" [color=gray, fontsize=24]
-	"S
-0" -> "C
-2" [label="2", penwidth=3]
+30" [color=gray, fontsize=24]
 	"S
 0" -> "T
-1" [label="1", penwidth=2]
+1" [label="3", penwidth=4]
 	"T
-1" -> "T
+1" -> "G
+2" [label="3", penwidth=4]
+	"G
+2" -> "A
+8" [label="1", penwidth=2]
+	"G
+2" -> "G
+4" [label="1", penwidth=2]
+	"G
+2" -> "A
 3" [label="1", penwidth=2]
-	{rank=same; "T
-1" "C
-2" };
-	{ edge [style=dashed, arrowhead=none]; "T
-1" -> "C
-2" }
-	"C
-2" -> "T
-3" [label="2", penwidth=3]
-	{rank=same; "C
-2" "T
-1" };
-	"T
-3" -> "A
-4" [label="3", penwidth=4]
 	"A
-4" -> "A
-5" [label="3", penwidth=4]
-	"A
+3" -> "G
+5" [label="1", penwidth=2]
+	{rank=same; "A
+3" "G
+4" };
+	{ edge [style=dashed, arrowhead=none]; "A
+3" -> "G
+4" }
+	"G
+4" -> "G
+5" [label="1", penwidth=2]
+	{rank=same; "G
+4" "A
+3" };
+	"G
 5" -> "T
-6" [label="3", penwidth=4]
+6" [label="2", penwidth=3]
 	"T
 6" -> "C
-7" [label="3", penwidth=4]
+7" [label="2", penwidth=3]
 	"C
-7" -> "T
-8" [label="3", penwidth=4]
-	"T
+7" -> "A
+8" [label="1", penwidth=2]
+	"C
+7" -> "C
+9" [label="1", penwidth=2]
+	"A
 8" -> "C
 9" [label="2", penwidth=3]
-	"T
-8" -> "T
-10" [label="1", penwidth=2]
 	"C
-9" -> "T
+9" -> "A
+11" [label="1", penwidth=2]
+	"C
+9" -> "C
 10" [label="2", penwidth=3]
-	"T
-10" -> "A
-12" [label="1", penwidth=2]
-	"T
-10" -> "T
-11" [label="2", penwidth=3]
-	"T
-11" -> "A
-13" [label="1", penwidth=2]
-	"T
-11" -> "C
-14" [label="1", penwidth=2]
-	{rank=same; "T
-11" "A
-12" };
-	{ edge [style=dashed, arrowhead=none]; "T
-11" -> "A
-12" }
-	"A
-12" -> "A
-13" [label="1", penwidth=2]
-	{rank=same; "A
-12" "T
-11" };
-	"A
-13" -> "C
-14" [label="2", penwidth=3]
 	"C
-14" -> "A
-15" [label="3", penwidth=4]
+10" -> "C
+12" [label="2", penwidth=3]
+	{rank=same; "C
+10" "A
+11" };
+	{ edge [style=dashed, arrowhead=none]; "C
+10" -> "A
+11" }
 	"A
-15" -> "T
-16" [label="3", penwidth=4]
+11" -> "C
+12" [label="1", penwidth=2]
+	{rank=same; "A
+11" "C
+10" };
+	"C
+12" -> "C
+17" [label="1", penwidth=2]
+	"C
+12" -> "T
+13" [label="2", penwidth=3]
 	"T
+13" -> "C
+17" [label="1", penwidth=2]
+	"T
+13" -> "C
+14" [label="1", penwidth=2]
+	"C
+14" -> "C
+15" [label="1", penwidth=2]
+	"C
+15" -> "G
+16" [label="1", penwidth=2]
+	"G
 16" -> "C
-17" [label="3", penwidth=4]
+17" [label="1", penwidth=2]
 	"C
 17" -> "A
-18" [label="3", penwidth=4]
-	"A
-18" -> "G
-19" [label="3", penwidth=4]
-	"G
-19" -> "C
-20" [label="3", penwidth=4]
+19" [label="2", penwidth=3]
 	"C
-20" -> "G
+17" -> "C
+18" [label="1", penwidth=2]
+	"C
+18" -> "T
+20" [label="1", penwidth=2]
+	{rank=same; "C
+18" "A
+19" };
+	{ edge [style=dashed, arrowhead=none]; "C
+18" -> "A
+19" }
+	"A
+19" -> "T
+20" [label="2", penwidth=3]
+	{rank=same; "A
+19" "C
+18" };
+	"T
+20" -> "C
 21" [label="3", penwidth=4]
-	"G
+	"C
 21" -> "A
 22" [label="3", penwidth=4]
 	"A
+22" -> "C
+24" [label="2", penwidth=3]
+	"A
 22" -> "G
-23" [label="3", penwidth=4]
+23" [label="1", penwidth=2]
 	"G
+23" -> "G
+25" [label="1", penwidth=2]
+	{rank=same; "G
+23" "C
+24" };
+	{ edge [style=dashed, arrowhead=none]; "G
 23" -> "C
-24" [label="3", penwidth=4]
+24" }
 	"C
 24" -> "G
-25" [label="3", penwidth=4]
+25" [label="2", penwidth=3]
+	{rank=same; "C
+24" "G
+23" };
 	"G
-25" -> "A
+25" -> "T
 26" [label="3", penwidth=4]
-	"A
-26" -> "T
-27" [label="2", penwidth=3]
-	"A
+	"T
 26" -> "A
-28" [label="1", penwidth=2]
-	"T
-27" -> "A
-28" [label="2", penwidth=3]
+27" [label="3", penwidth=4]
 	"A
-28" -> "G
+27" -> "G
+28" [label="3", penwidth=4]
+	"G
+28" -> "T
 29" [label="3", penwidth=4]
-	"G
-29" -> "A
-31" [label="2", penwidth=3]
-	"G
-29" -> "T
-30" [label="1", penwidth=2]
 	"T
-30" -> "A
-31" [label="1", penwidth=2]
-	"A
-31" -> "C
-33" [label="1", penwidth=2]
-	"A
-31" -> "C
-32" [label="1", penwidth=2]
-	"A
-31" -> "G
-34" [label="1", penwidth=2]
-	"C
-32" -> "C
-33" [label="1", penwidth=2]
-	"C
-33" -> "G
-34" [label="2", penwidth=3]
-	"G
-34" -> "G
-35" [label="3", penwidth=4]
-	"G
-35" -> "A
-36" [label="3", penwidth=4]
-	"A
-36" -> "T
-39" [label="2", penwidth=3]
-	"A
-36" -> "A
-37" [label="1", penwidth=2]
-	"A
-37" -> "C
-38" [label="1", penwidth=2]
-	"C
-38" -> "T
-39" [label="1", penwidth=2]
-	"T
-39" -> "T
-41" [label="2", penwidth=3]
-	"T
-39" -> "G
-40" [label="1", penwidth=2]
-	"G
-40" -> "C
-42" [label="1", penwidth=2]
-	{rank=same; "G
-40" "T
-41" };
-	{ edge [style=dashed, arrowhead=none]; "G
-40" -> "T
-41" }
-	"T
-41" -> "C
-42" [label="2", penwidth=3]
-	{rank=same; "T
-41" "G
-40" };
-	"C
-42" -> "C
-43" [label="3", penwidth=4]
-	"C
-43" -> "T
-45" [label="2", penwidth=3]
-	"C
-43" -> "A
-44" [label="1", penwidth=2]
-	"A
-44" -> "G
-46" [label="1", penwidth=2]
-	{rank=same; "A
-44" "T
-45" };
-	{ edge [style=dashed, arrowhead=none]; "A
-44" -> "T
-45" }
-	"T
-45" -> "G
-46" [label="2", penwidth=3]
-	{rank=same; "T
-45" "A
-44" };
-	"G
-46" -> "A
-50" [label="2", penwidth=3]
-	"G
-46" -> "C
-47" [label="1", penwidth=2]
-	"C
-47" -> "G
-48" [label="1", penwidth=2]
-	"G
-48" -> "A
-49" [label="1", penwidth=2]
-	"A
-49" -> "A
-50" [label="1", penwidth=2]
-	"A
-50" -> "G
-51" [label="3", penwidth=4]
-	"G
-51" -> "C
-53" [label="2", penwidth=3]
-	"G
-51" -> "T
-52" [label="1", penwidth=2]
-	"T
-52" -> "C
-54" [label="1", penwidth=2]
-	{rank=same; "T
-52" "C
-53" };
-	{ edge [style=dashed, arrowhead=none]; "T
-52" -> "C
-53" }
-	"C
-53" -> "C
-54" [label="2", penwidth=3]
-	{rank=same; "C
-53" "T
-52" };
-	"C
-54" -> "C
-55" [label="3", penwidth=4]
-	"C
-55" -> "T
-56" [label="2", penwidth=3]
-	"C
-55" -> "T
-57" [label="1", penwidth=2]
-	"T
-56" -> "T
-57" [label="2", penwidth=3]
-	"T
-57" -> "C
-58" [label="3", penwidth=4]
-	"C
-58" -> "G
-60" [label="2", penwidth=3]
-	"C
-58" -> "C
-59" [label="1", penwidth=2]
-	"C
-59" -> "C
-61" [label="1", penwidth=2]
-	{rank=same; "C
-59" "G
-60" };
-	{ edge [style=dashed, arrowhead=none]; "C
-59" -> "G
-60" }
-	"G
-60" -> "C
-61" [label="2", penwidth=3]
-	{rank=same; "G
-60" "C
-59" };
-	"C
-61" -> "C
-62" [label="3", penwidth=4]
-	"C
-62" -> "A
-63" [label="3", penwidth=4]
-	"A
-63" -> "A
-64" [label="3", penwidth=4]
-	"A
-64" -> "C
-65" [label="3", penwidth=4]
-	"C
-65" -> "A
-67" [label="2", penwidth=3]
-	"C
-65" -> "T
-66" [label="1", penwidth=2]
-	"T
-66" -> "A
-67" [label="1", penwidth=2]
-	"A
-67" -> "A
-68" [label="3", penwidth=4]
-	"A
-68" -> "C
-69" [label="3", penwidth=4]
-	"C
-69" -> "T
-70" [label="3", penwidth=4]
-	"T
-70" -> "T
-71" [label="3", penwidth=4]
-	"T
-71" -> "G
-72" [label="2", penwidth=3]
-	"T
-71" -> "C
-73" [label="1", penwidth=2]
-	"G
-72" -> "C
-73" [label="1", penwidth=2]
-	"G
-72" -> "G
-75" [label="1", penwidth=2]
-	"C
-73" -> "A
-74" [label="2", penwidth=3]
-	"A
-74" -> "G
-76" [label="2", penwidth=3]
-	{rank=same; "A
-74" "G
-75" };
-	{ edge [style=dashed, arrowhead=none]; "A
-74" -> "G
-75" }
-	"G
-75" -> "G
-76" [label="1", penwidth=2]
-	{rank=same; "G
-75" "A
-74" };
-	"G
-76" -> "T
-78" [label="2", penwidth=3]
-	"G
-76" -> "T
-77" [label="1", penwidth=2]
-	"T
-77" -> "T
-78" [label="1", penwidth=2]
-	"T
-78" -> "T
-79" [label="3", penwidth=4]
-	"T
-79" -> "G
-81" [label="2", penwidth=3]
-	"T
-79" -> "T
-80" [label="1", penwidth=2]
-	"T
-80" -> "C
-82" [label="1", penwidth=2]
-	{rank=same; "T
-80" "G
-81" };
-	{ edge [style=dashed, arrowhead=none]; "T
-80" -> "G
-81" }
-	"G
-81" -> "C
-82" [label="2", penwidth=3]
-	{rank=same; "G
-81" "T
-80" };
-	"C
-82" -> "C
-84" [label="2", penwidth=3]
-	"C
-82" -> "A
-83" [label="1", penwidth=2]
-	"A
-83" -> "C
-85" [label="1", penwidth=2]
-	{rank=same; "A
-83" "C
-84" };
-	{ edge [style=dashed, arrowhead=none]; "A
-83" -> "C
-84" }
-	"C
-84" -> "C
-85" [label="2", penwidth=3]
-	{rank=same; "C
-84" "A
-83" };
-	"C
-85" -> "T
-86" [label="3", penwidth=4]
-	"T
-86" -> "A
-87" [label="3", penwidth=4]
-	"A
-87" -> "A
-92" [label="2", penwidth=3]
-	"A
-87" -> "G
-88" [label="1", penwidth=2]
-	"G
-88" -> "C
-89" [label="1", penwidth=2]
-	"C
-89" -> "A
-90" [label="1", penwidth=2]
-	"A
-90" -> "C
-91" [label="1", penwidth=2]
-	"C
-91" -> "A
-92" [label="1", penwidth=2]
-	"A
-92" -> "C
-93" [label="3", penwidth=4]
-	"C
-93" -> "T
-94" [label="3", penwidth=4]
-	"T
-94" -> "A
-95" [label="3", penwidth=4]
-	"A
-95" -> "G
-97" [label="2", penwidth=3]
-	"A
-95" -> "C
-96" [label="1", penwidth=2]
-	"C
-96" -> "A
-98" [label="1", penwidth=2]
-	{rank=same; "C
-96" "G
-97" };
-	{ edge [style=dashed, arrowhead=none]; "C
-96" -> "G
-97" }
-	"G
-97" -> "A
-98" [label="1", penwidth=2]
-	"G
-97" -> "A
-99" [label="1", penwidth=2]
-	{rank=same; "G
-97" "C
-96" };
-	"A
-98" -> "A
-99" [label="2", penwidth=3]
-	"A
-99" -> "C
-100" [label="3", penwidth=4]
-	"C
-100" -> "T
-102" [label="2", penwidth=3]
-	"C
-100" -> "C
-101" [label="1", penwidth=2]
-	"C
-101" -> "C
-103" [label="1", penwidth=2]
-	{rank=same; "C
-101" "T
-102" };
-	{ edge [style=dashed, arrowhead=none]; "C
-101" -> "T
-102" }
-	"T
-102" -> "C
-103" [label="2", penwidth=3]
-	{rank=same; "T
-102" "C
-101" };
-	"C
-103" -> "G
-105" [label="2", penwidth=3]
-	"C
-103" -> "A
-104" [label="1", penwidth=2]
-	"A
-104" -> "T
-106" [label="1", penwidth=2]
-	{rank=same; "A
-104" "G
-105" };
-	{ edge [style=dashed, arrowhead=none]; "A
-104" -> "G
-105" }
-	"G
-105" -> "T
-106" [label="2", penwidth=3]
-	{rank=same; "G
-105" "A
-104" };
-	"T
-106" -> "A
-110" [label="2", penwidth=3]
-	"T
-106" -> "T
-107" [label="1", penwidth=2]
-	"T
-107" -> "C
-108" [label="1", penwidth=2]
-	"C
-108" -> "G
-109" [label="1", penwidth=2]
-	"G
-109" -> "A
-111" [label="1", penwidth=2]
-	{rank=same; "G
-109" "A
-110" };
-	{ edge [style=dashed, arrowhead=none]; "G
-109" -> "A
-110" }
-	"A
-110" -> "A
-111" [label="2", penwidth=3]
-	{rank=same; "A
-110" "G
-109" };
-	"A
-111" -> "C
-114" [label="2", penwidth=3]
-	"A
-111" -> "G
-112" [label="1", penwidth=2]
-	"G
-112" -> "T
-113" [label="1", penwidth=2]
-	"T
-113" -> "C
-114" [label="1", penwidth=2]
-	"C
-114" -> "T
-115" [label="3", penwidth=4]
-	"T
-115" -> "G
-116" [label="3", penwidth=4]
-	"G
-116" -> "T
-117" [label="2", penwidth=3]
-	"G
-116" -> "T
-118" [label="1", penwidth=2]
-	"T
-117" -> "T
-118" [label="2", penwidth=3]
-	"T
-118" -> "G
-119" [label="3", penwidth=4]
-	"G
-119" -> "C
-120" [label="3", penwidth=4]
-	"C
-120" -> "A
-122" [label="2", penwidth=3]
-	"C
-120" -> "A
-121" [label="1", penwidth=2]
-	"A
-121" -> "A
-122" [label="1", penwidth=2]
-	"A
-122" -> "G
-123" [label="3", penwidth=4]
-	"G
-123" -> "C
-124" [label="3", penwidth=4]
-	"C
-124" -> "T
-125" [label="2", penwidth=3]
-	"C
-124" -> "T
-126" [label="1", penwidth=2]
-	"T
-125" -> "T
-126" [label="2", penwidth=3]
-	"T
-126" -> "G
-127" [label="3", penwidth=4]
-	"G
-127" -> "T
-128" [label="3", penwidth=4]
-	"T
-128" -> "C
-129" [label="3", penwidth=4]
-	"C
-129" -> "A
-130" [label="3", penwidth=4]
-	"A
-130" -> "T
-131" [label="3", penwidth=4]
-	"T
-131" -> "E
-132" [label="3", penwidth=4]
+29" -> "E
+30" [label="3", penwidth=4]
 }

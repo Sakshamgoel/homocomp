@@ -11,8 +11,15 @@ from skbio.alignment import global_pairwise_align_nucleotide
 from skbio import TabularMSA, DNA
 import statistics
 
+import pandas as pd
 
-np.random.seed(seed=1)
+
+from plotnine import *
+from plotnine.data import *
+%matplotlib inline
+
+
+#np.random.seed(seed=2)
 
 def generate_sequence(n):
     return("".join(np.random.choice(["A","C","G","T"], n)))
@@ -34,6 +41,7 @@ def mutate(str, snp_rate, indel_rate):
                         i += 1
         i += 1
     return("".join(x))
+
 
 """
 homoCompress
@@ -126,23 +134,38 @@ def expansionMean(toExpandWith, consenSeq):
                 else: #mismatch
                     locArray.append(-1)
                     allignLoc+=1
+            else:
+                allignLoc+=1
+                
             
-            consensusLoc += 1
-                   
-            
+            consensusLoc += 1  
         locDict[align] = locArray
-
     finalStr = ""
     finalArr = []
     for base in range(len(consenSeq)):
-        numToDivide = 0
-        count = 0
-        for key in locDict:
-            if locDict[key][base] != -1:
-                
-                numToDivide = numToDivide + toExpandWith[key][1][locDict[key][base]]
-                count += 1
-        finalBaseLength = round(numToDivide/count)
+        if (base == 14):
+            numToDivide = 0
+            count = 0
+            for key in locDict:
+                if locDict[key][base] != -1:
+                    #print("locDict[key][base]")
+                    #print(locDict[key][base])
+                    #print("toExpandWith[key][1][locDict[key][base]]")
+                 
+                    #print(toExpandWith[key][1][locDict[key][base]])
+                    numToDivide = numToDivide + toExpandWith[key][1][locDict[key][base]]
+                    count += 1
+        else:
+            numToDivide = 0
+            count = 0
+            for key in locDict:
+                if locDict[key][base] != -1:
+                    numToDivide = numToDivide + toExpandWith[key][1][locDict[key][base]]
+                    count += 1
+        finalBaseLength = 0
+        if (count > 0): 
+            finalBaseLength = round(numToDivide/count)
+            
         charCount = 0
         while charCount < finalBaseLength:
             finalStr = finalStr + consenSeq[base]
@@ -171,12 +194,12 @@ def expansionMedian(toExpandWith, consenSeq):
                 else: #mismatch
                     locArray.append(-1)
                     allignLoc+=1
+            else:
+                allignLoc+=1
+                
             
-            consensusLoc += 1
-                   
-            
+            consensusLoc += 1  
         locDict[align] = locArray
-
     finalStr = ""
     finalArr = []
     for base in range(len(consenSeq)):
@@ -184,7 +207,9 @@ def expansionMedian(toExpandWith, consenSeq):
         for key in locDict:
             if locDict[key][base] != -1:
                 medianArr.append(toExpandWith[key][1][locDict[key][base]])
-        finalBaseLength = statistics.median(medianArr)
+        finalBaseLength = 0
+        if (len(medianArr) > 0):
+            finalBaseLength = statistics.median(medianArr)
         charCount = 0
         while charCount < finalBaseLength:
             finalStr = finalStr + consenSeq[base]
@@ -213,20 +238,22 @@ def expansionMode(toExpandWith, consenSeq):
                 else: #mismatch
                     locArray.append(-1)
                     allignLoc+=1
+            else:
+                allignLoc+=1
+                
             
-            consensusLoc += 1
-                   
-            
+            consensusLoc += 1  
         locDict[align] = locArray
-
     finalStr = ""
-    finalArr = []
+
     for base in range(len(consenSeq)):
-        medianArr = []
+        modeArr = []
         for key in locDict:
             if locDict[key][base] != -1:
-                medianArr.append(toExpandWith[key][1][locDict[key][base]])
-        finalBaseLength = statistics.mode(medianArr)
+                modeArr.append(toExpandWith[key][1][locDict[key][base]])
+        finalBaseLength = 0
+        if (len(modeArr) > 0):
+            finalBaseLength = statistics.median(modeArr)
         charCount = 0
         while charCount < finalBaseLength:
             finalStr = finalStr + consenSeq[base]
@@ -258,75 +285,182 @@ def calcAvgScore(seqs, allignmentToTest):
     
 
 
-seqs=[]   
-s1 = generate_sequence(100)
-s2 = mutate(s1, 0.1, 0.1)
-s3 = mutate(s1, 0.1, 0.1)
+# seqs=[]
+# smallbase = generate_sequence(20)
+# s1 = mutate(smallbase, 0.1, 0.1)
+# s2 = mutate(smallbase, 0.1, 0.1)
+# s3 = mutate(smallbase, 0.1, 0.1)
 
-seqs.append(s1)
-seqs.append(s2)
-seqs.append(s3)
+# s1 = mutate(baseSeq, 0.1, 0.1)
+# s2 = mutate(baseSeq, 0.1, 0.1)
+# s3 = mutate(baseSeq, 0.1, 0.1)
+# s4 = mutate(baseSeq, 0.1, 0.1)
+# s5 = mutate(baseSeq, 0.1, 0.1)
+# s6 = mutate(baseSeq, 0.1, 0.1)
 
-poaCompressed = compressedPartialOrderAllignment(seqs)
+# s11 = mutate(baseSeq, 0.1, 0.1)
+# s22 = mutate(baseSeq, 0.1, 0.1)
+# s33 = mutate(baseSeq, 0.1, 0.1)
+# s44 = mutate(baseSeq, 0.1, 0.1)
+# s55 = mutate(baseSeq, 0.1, 0.1)
+# s66 = mutate(baseSeq, 0.1, 0.1)
 
-print("### Sequences Before Compression ###")
-for seq in seqs:
-    print(seq)
-print("\n\n")
+# seqs.append(s1)
+# seqs.append(s2)
+# seqs.append(s3)
+# seqs.append(s4)
+# seqs.append(s5)
+# seqs.append(s6)
 
-print("### Sequences After Compression ###")
-homecompSeqs = {}
-homoId = 0
-for seq in seqs:
-    print(homoCompress(seq)[0])
-    print(homoCompress(seq)[1])
-    homecompSeqs[homoId] = homoCompress(seq)
-    homoId = homoId + 1
-print("\n\n")
+# seqs.append(s11)
+# seqs.append(s22)
+# seqs.append(s33)
+# seqs.append(s44)
+# seqs.append(s55)
+# seqs.append(s66)
 
+# poaCompressed = compressedPartialOrderAllignment(seqs)
 
-print("### Consensus Sequence Before Expansion ###")
-print(poaCompressed)
-print("\n\n")
-print(seqs)
-print("\n\n")
-print("### GLOBAL PAIRWISE ALIGN ###")
-readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
-print(readyForExpansion)
-print("\n\n")
-print("### MEAN EXPANSION FINAL STRING ###")
-finalMean = expansionMean(readyForExpansion, poaCompressed)
-print(finalMean)
-print("\n\n")
+# print("### Sequences Before Compression ###")
+# for seq in seqs:
+#     print(seq)
+# print("\n\n")
 
-print("### MEDIAN EXPANSION FINAL STRING ###")
-finalMedian = expansionMedian(readyForExpansion, poaCompressed)
-print(finalMedian)
-print("\n\n")
-
-print("### MODE EXPANSION FINAL STRING ###")
-finalMode = expansionMode(readyForExpansion, poaCompressed)
-print(finalMode)
-print("\n\n")
-
-
-print("### Average Alignment Score Compressed ###")
-print(seqs)
-avgMean = calcAvgScore(seqs, finalMedian)
-print(avgMean)
+# print("### Sequences After Compression ###")
+# homecompSeqs = {}
+# homoId = 0
+# for seq in seqs:
+#     print(homoCompress(seq)[0])
+#     print(homoCompress(seq)[1])
+#     homecompSeqs[homoId] = homoCompress(seq)
+#     homoId = homoId + 1
+# print("\n\n")
 
 
-print("\n\n")
-print("### Partial Order Allignment Without Compression ###")
-poaNonCompressed = partialOrderAllignment(seqs)
-print(poaNonCompressed)
-print(finalMedian)
+# print("### Consensus Sequence Before Expansion ###")
+# print(poaCompressed)
+# print("\n\n")
+# print(seqs)
+# print("\n\n")
+# print("### GLOBAL PAIRWISE ALIGN ###")
+# readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
 
-print("\n\n")
-print("### Average Alignment Score Without Compression ###")
-print(seqs)
-avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
-print(avgMeanNonComp)
+
+# print("\n\n")
+# print("### MEAN EXPANSION FINAL STRING ###")
+# finalMean = expansionMean(readyForExpansion, poaCompressed)
+# print(finalMean)
+# print("\n\n")
+
+# print("### MEDIAN EXPANSION FINAL STRING ###")
+# finalMedian = expansionMedian(readyForExpansion, poaCompressed)
+# print(finalMedian)
+# print("\n\n")
+
+# print("### MODE EXPANSION FINAL STRING ###")
+# finalMode = expansionMode(readyForExpansion, poaCompressed)
+# print(finalMode)
+# print("\n\n")
+
+
+# print("### Average Alignment Score Compressed Mean ###")
+# print(seqs)
+# avgMean = calcAvgScore(seqs, finalMean)
+# print(avgMean)
+
+# print("### Average Alignment Score Compressed Median ###")
+# print(seqs)
+# avgMedian = calcAvgScore(seqs, finalMedian)
+# print(avgMedian)
+
+
+# print("### Average Alignment Score Compressed Mode ###")
+# print(seqs)
+# avgModes = calcAvgScore(seqs, finalMode)
+# print(avgModes)
+
+
+
+# print("\n\n")
+# print("### Partial Order Allignment Without Compression ###")
+# poaNonCompressed = partialOrderAllignment(seqs)
+# print(poaNonCompressed)
+# print(finalMedian)
+# print(smallbase)
+# print("\n\n")
+# print("### Average Alignment Score Without Compression ###")
+# print(seqs)
+# avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
+# print(avgMeanNonComp)
+
+data = {"comp": [],
+        "seqLength": [],
+        "value": []
+        }
+toCheck = [5, 10, 15, 20, 25]
+for checkNum in toCheck:
+    meanToAppend = 0
+    modeToAppend = 0
+    medianToAppend = 0
+    nonCompToAppend = 0
+    for x in range(10):
+        seqs = []
+        base = generate_sequence(checkNum)
+        s1 = mutate(base, 0.1, 0.1)
+        s2 = mutate(base, 0.1, 0.1)
+        s3 = mutate(base, 0.1, 0.1)
+        
+        seqs.append(s1)
+        seqs.append(s2)
+        seqs.append(s3)
+        
+        poaCompressed = compressedPartialOrderAllignment(seqs)
+        homecompSeqs = {}
+        homoId = 0
+        for seq in seqs:
+            homecompSeqs[homoId] = homoCompress(seq)
+            homoId = homoId + 1
+            
+        readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
+        finalMean = expansionMean(readyForExpansion, poaCompressed)
+        finalMedian = expansionMedian(readyForExpansion, poaCompressed)
+        finalMode = expansionMode(readyForExpansion, poaCompressed)
+        
+        avgMean = calcAvgScore(seqs, finalMean)
+        avgMedian = calcAvgScore(seqs, finalMedian)
+        avgMode = calcAvgScore(seqs, finalMode)
+        
+        poaNonCompressed = partialOrderAllignment(seqs)
+        avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
+        
+        meanToAppend += avgMean
+        medianToAppend += avgMedian 
+        modeToAppend += avgMode
+        nonCompToAppend += avgMeanNonComp
+    finalMean = meanToAppend/10
+    finalMedian = medianToAppend/10
+    finalMode = modeToAppend/10
+    nonCompToAppend = nonCompToAppend/10
+    data["comp"].append("Mean")
+    data["comp"].append("Median")
+    data["comp"].append("Mode")
+    data["comp"].append("NonCompressed")
+    data["seqLength"].append(checkNum)
+    data["seqLength"].append(checkNum)
+    data["seqLength"].append(checkNum)
+    data["seqLength"].append(checkNum)
+    data["value"].append(finalMean)
+    data["value"].append(finalMedian)
+    data["value"].append(finalMode)
+    data["value"].append(nonCompToAppend)
+    
+    
+    
+    
+    
+        
+df = pd.DataFrame(data)
+print(ggplot(df) + geom_bar(aes(x="seqLength", y="value", fill="comp"), stat = "identity", position = "dodge2"))
 
 
 

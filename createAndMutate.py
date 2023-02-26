@@ -10,16 +10,22 @@ import pyabpoa as pa
 from skbio.alignment import global_pairwise_align_nucleotide
 from skbio import TabularMSA, DNA
 import statistics
+from scipy.stats import poisson
 
 import pandas as pd
+import math
 
 
 from plotnine import *
 from plotnine.data import *
-%matplotlib inline
+#%matplotlib inline
 
 
-#np.random.seed(seed=2)
+#np.random.seed(seed=2) #test for bottom string dash
+#np.random.seed(seed=3) #test for top string dash/very bad allignment
+#np.random.seed(seed=4) ##test for top string dash/mismatch
+
+
 
 def generate_sequence(n):
     return("".join(np.random.choice(["A","C","G","T"], n)))
@@ -41,6 +47,91 @@ def mutate(str, snp_rate, indel_rate):
                         i += 1
         i += 1
     return("".join(x))
+
+
+def mutatePolymerComp(str, snp_rate, indel_rate):
+    x = [c for c in str]
+    i = 0
+    finalStr = ""
+    while i < len(x):
+        starter = str[i]
+        poisMean = 1
+        p = i + 1
+        while p < len(str) and str[i] == str[p]:
+            p = p + 1
+            i = i + 1
+            poisMean = poisMean + 1
+           
+        charNumToAdd = poisson.rvs(mu=poisMean, size=1)
+        for y in range(0, charNumToAdd[0]):
+            finalStr = finalStr + starter
+        i = i + 1
+    print(str)
+    print(finalStr)
+    return(finalStr)
+
+
+def globalPariwiseAllignment(seqsToAllign):
+    if len(seqsToAllign) !=2:
+        return "Unable to allign more or less than 2 allignments"
+    else:
+        topSeq = seqsToAllign[0]
+        botSeq = seqsToAllign[1]
+        matrix = np.empty((len(botSeq) + 1, len(topSeq) + 1))
+        #print("botSeq  ", len(botSeq) + 1)
+        matrix[0,0] = 0
+        for x in range(1, len(botSeq)+1):
+            matrix[x,0] = math.floor(matrix[x-1,0] - 1)
+        for x in range(1, len(topSeq)+1):
+            matrix[0,x] = int(matrix[0,x-1] - 1)
+            
+        for x in range(1, len(botSeq)+1):
+            for y in range(1, len(topSeq)+1):
+                if (topSeq[y-1] == botSeq[x-1]):
+                    num1 = matrix[x-1, y-1] + 1
+                    num2 = matrix[x-1,y-1]-1
+                    num3 = matrix[x-1, y]-1
+                    num4 = matrix[x, y-1] -1
+                    matrix[x, y] = max(num1,num2,num3,num4)
+                else:
+                    num2 = matrix[x-1,y-1]-1
+                    num3 = matrix[x-1, y]-1
+                    num4 = matrix[x, y-1] -1
+                    matrix[x, y] = max(num2,num3,num4)
+           
+        np.set_printoptions(suppress = True)
+        backR = len(botSeq)
+        backC = len(topSeq)
+        allignSeqBot = ""
+        allignSeqTop = ""
+        while backR > 0 or backC > 0:
+            maxNum = []
+            maxNum.append(matrix[backR-1, backC-1])
+            maxNum.append(matrix[backR-1, backC])
+            maxNum.append(matrix[backR, backC-1])
+            #print(matrix[backX, backY-1])
+            maxToGo = max(maxNum)
+            if (maxToGo == matrix[backR-1, backC-1]):
+                allignSeqBot = botSeq[backR-1] + allignSeqBot 
+                allignSeqTop = topSeq[backC-1] + allignSeqTop 
+                backR-=1
+                backC-=1
+            elif (maxToGo == matrix[backR, backC-1]):
+                allignSeqBot = "-" + allignSeqBot 
+                allignSeqTop = topSeq[backC-1] + allignSeqTop
+                backC-=1
+            else:
+                allignSeqBot = botSeq[backR-1] + allignSeqBot 
+                allignSeqTop = "-" + allignSeqTop 
+                backR-=1
+        returnTup = ([allignSeqTop, allignSeqBot], matrix[len(botSeq), len(topSeq)])
+        #print(allignSeqTop)
+        #print(allignSeqBot)
+        return returnTup
+#seqs = ["ATCAGTGTAT", "TCTGTGTAT"]
+#seqs = ["GCAGTC", "GACTC"]
+#globalPariwiseAllignment(seqs)
+#print()
 
 
 """
@@ -105,14 +196,16 @@ def partialOrderAllignment(seqs):
        # print(seq)
        
        
-def pairwiseAlign(seqs, consenSeq):
-    for seq in seqs:
-        alignment = global_pairwise_align_nucleotide(DNA(consenSeq), DNA(seqs[seq][0]))
-        seqs[seq] = seqs[seq] + ([str(alignment[0][0]), str(alignment[0][1])],)
+def pairwiseAlign(homecompSeqs, consenSeq):
+    for id in homecompSeqs:
+        #alignment = global_pairwise_align_nucleotide(DNA(consenSeq), DNA(homecompSeqs[id][0]))
+        alignment = globalPariwiseAllignment([consenSeq, homecompSeqs[id][0]])
+        homecompSeqs[id] = homecompSeqs[id] + ([str(alignment[0][0]), str(alignment[0][1])],)
         print(alignment[0][0])
         print(alignment[0][1])
+        print(alignment[1])
         print("\n")
-    return seqs
+    return homecompSeqs
     
 
 def expansionMean(toExpandWith, consenSeq):
@@ -140,6 +233,7 @@ def expansionMean(toExpandWith, consenSeq):
             
             consensusLoc += 1  
         locDict[align] = locArray
+        
     finalStr = ""
     finalArr = []
     for base in range(len(consenSeq)):
@@ -265,203 +359,188 @@ def expansionMode(toExpandWith, consenSeq):
 def calcAvgScore(seqs, allignmentToTest):
     avgToDivide = 0
     for seq in seqs:
-        alignment = global_pairwise_align_nucleotide(DNA(allignmentToTest), DNA(seq))
+        #alignment = global_pairwise_align_nucleotide(DNA(allignmentToTest), DNA(seq))
+        alignment = globalPariwiseAllignment([allignmentToTest, seq])
         avgToDivide += alignment[1]
     finalAverage = avgToDivide/len(seqs)
     return finalAverage
 
     
     
-            
-            
-            
-            
-        
-        
-     
-
-        
-        
-    
-
-
-# seqs=[]
-# smallbase = generate_sequence(20)
-# s1 = mutate(smallbase, 0.1, 0.1)
-# s2 = mutate(smallbase, 0.1, 0.1)
-# s3 = mutate(smallbase, 0.1, 0.1)
-
-# s1 = mutate(baseSeq, 0.1, 0.1)
-# s2 = mutate(baseSeq, 0.1, 0.1)
-# s3 = mutate(baseSeq, 0.1, 0.1)
-# s4 = mutate(baseSeq, 0.1, 0.1)
-# s5 = mutate(baseSeq, 0.1, 0.1)
-# s6 = mutate(baseSeq, 0.1, 0.1)
-
-# s11 = mutate(baseSeq, 0.1, 0.1)
-# s22 = mutate(baseSeq, 0.1, 0.1)
-# s33 = mutate(baseSeq, 0.1, 0.1)
-# s44 = mutate(baseSeq, 0.1, 0.1)
-# s55 = mutate(baseSeq, 0.1, 0.1)
-# s66 = mutate(baseSeq, 0.1, 0.1)
-
-# seqs.append(s1)
-# seqs.append(s2)
-# seqs.append(s3)
-# seqs.append(s4)
-# seqs.append(s5)
-# seqs.append(s6)
-
-# seqs.append(s11)
-# seqs.append(s22)
-# seqs.append(s33)
-# seqs.append(s44)
-# seqs.append(s55)
-# seqs.append(s66)
-
-# poaCompressed = compressedPartialOrderAllignment(seqs)
-
-# print("### Sequences Before Compression ###")
-# for seq in seqs:
-#     print(seq)
-# print("\n\n")
-
-# print("### Sequences After Compression ###")
-# homecompSeqs = {}
-# homoId = 0
-# for seq in seqs:
-#     print(homoCompress(seq)[0])
-#     print(homoCompress(seq)[1])
-#     homecompSeqs[homoId] = homoCompress(seq)
-#     homoId = homoId + 1
-# print("\n\n")
-
-
-# print("### Consensus Sequence Before Expansion ###")
-# print(poaCompressed)
-# print("\n\n")
-# print(seqs)
-# print("\n\n")
-# print("### GLOBAL PAIRWISE ALIGN ###")
-# readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
-
-
-# print("\n\n")
-# print("### MEAN EXPANSION FINAL STRING ###")
-# finalMean = expansionMean(readyForExpansion, poaCompressed)
-# print(finalMean)
-# print("\n\n")
-
-# print("### MEDIAN EXPANSION FINAL STRING ###")
-# finalMedian = expansionMedian(readyForExpansion, poaCompressed)
-# print(finalMedian)
-# print("\n\n")
-
-# print("### MODE EXPANSION FINAL STRING ###")
-# finalMode = expansionMode(readyForExpansion, poaCompressed)
-# print(finalMode)
-# print("\n\n")
-
-
-# print("### Average Alignment Score Compressed Mean ###")
-# print(seqs)
-# avgMean = calcAvgScore(seqs, finalMean)
-# print(avgMean)
-
-# print("### Average Alignment Score Compressed Median ###")
-# print(seqs)
-# avgMedian = calcAvgScore(seqs, finalMedian)
-# print(avgMedian)
-
-
-# print("### Average Alignment Score Compressed Mode ###")
-# print(seqs)
-# avgModes = calcAvgScore(seqs, finalMode)
-# print(avgModes)
-
-
-
-# print("\n\n")
-# print("### Partial Order Allignment Without Compression ###")
-# poaNonCompressed = partialOrderAllignment(seqs)
-# print(poaNonCompressed)
-# print(finalMedian)
-# print(smallbase)
-# print("\n\n")
-# print("### Average Alignment Score Without Compression ###")
-# print(seqs)
-# avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
-# print(avgMeanNonComp)
-
-data = {"comp": [],
-        "seqLength": [],
-        "value": []
-        }
-toCheck = [5, 10, 15, 20, 25]
-for checkNum in toCheck:
-    meanToAppend = 0
-    modeToAppend = 0
-    medianToAppend = 0
-    nonCompToAppend = 0
-    for x in range(10):
-        seqs = []
-        base = generate_sequence(checkNum)
-        s1 = mutate(base, 0.1, 0.1)
-        s2 = mutate(base, 0.1, 0.1)
-        s3 = mutate(base, 0.1, 0.1)
-        
+def singleRun(howManySeqs, length):
+    seqs=[]
+    smallbase = generate_sequence(length) 
+    for x in range(howManySeqs):
+        s1 = mutatePolymerComp(smallbase, 0.1, 0.1)
         seqs.append(s1)
-        seqs.append(s2)
-        seqs.append(s3)
         
-        poaCompressed = compressedPartialOrderAllignment(seqs)
-        homecompSeqs = {}
-        homoId = 0
-        for seq in seqs:
-            homecompSeqs[homoId] = homoCompress(seq)
-            homoId = homoId + 1
-            
-        readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
-        finalMean = expansionMean(readyForExpansion, poaCompressed)
-        finalMedian = expansionMedian(readyForExpansion, poaCompressed)
-        finalMode = expansionMode(readyForExpansion, poaCompressed)
-        
-        avgMean = calcAvgScore(seqs, finalMean)
-        avgMedian = calcAvgScore(seqs, finalMedian)
-        avgMode = calcAvgScore(seqs, finalMode)
-        
-        poaNonCompressed = partialOrderAllignment(seqs)
-        avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
-        
-        meanToAppend += avgMean
-        medianToAppend += avgMedian 
-        modeToAppend += avgMode
-        nonCompToAppend += avgMeanNonComp
-    finalMean = meanToAppend/10
-    finalMedian = medianToAppend/10
-    finalMode = modeToAppend/10
-    nonCompToAppend = nonCompToAppend/10
-    data["comp"].append("Mean")
-    data["comp"].append("Median")
-    data["comp"].append("Mode")
-    data["comp"].append("NonCompressed")
-    data["seqLength"].append(checkNum)
-    data["seqLength"].append(checkNum)
-    data["seqLength"].append(checkNum)
-    data["seqLength"].append(checkNum)
-    data["value"].append(finalMean)
-    data["value"].append(finalMedian)
-    data["value"].append(finalMode)
-    data["value"].append(nonCompToAppend)
     
     
     
+    poaCompressed = compressedPartialOrderAllignment(seqs)
+    
+    print("### Sequences Before Compression ###")
+    for seq in seqs:
+        print(seq)
+    print("\n\n")
+    
+    print("### Sequences After Compression ###")
+    homecompSeqs = {}
+    homoId = 0
+    for seq in seqs:
+        print(homoCompress(seq)[0])
+        print(homoCompress(seq)[1])
+        homecompSeqs[homoId] = homoCompress(seq)
+        homoId = homoId + 1
+    print("\n\n")
     
     
-        
-df = pd.DataFrame(data)
-print(ggplot(df) + geom_bar(aes(x="seqLength", y="value", fill="comp"), stat = "identity", position = "dodge2"))
+    print("### Consensus Sequence Before Expansion ###")
+    print(poaCompressed)
+    print("\n\n")
+    print(seqs)
+    print("\n\n")
+    print("### GLOBAL PAIRWISE ALIGN ###")
+    readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
+    
+    
+    print("\n\n")
+    print("### MEAN EXPANSION FINAL STRING ###")
+    finalMean = expansionMean(readyForExpansion, poaCompressed)
+    print(finalMean)
+    print("\n\n")
+    
+    print("### MEDIAN EXPANSION FINAL STRING ###")
+    finalMedian = expansionMedian(readyForExpansion, poaCompressed)
+    print(finalMedian)
+    print("\n\n")
+    
+    print("### MODE EXPANSION FINAL STRING ###")
+    finalMode = expansionMode(readyForExpansion, poaCompressed)
+    print(finalMode)
+    print("\n\n")
+    
+    
+    print("### Average Alignment Score Compressed Mean ###")
+    print(seqs)
+    avgMean = calcAvgScore(seqs, finalMean)
+    print(avgMean)
+    
+    print("### Average Alignment Score Compressed Median ###")
+    print(seqs)
+    avgMedian = calcAvgScore(seqs, finalMedian)
+    print(avgMedian)
+    
+    
+    print("### Average Alignment Score Compressed Mode ###")
+    print(seqs)
+    avgModes = calcAvgScore(seqs, finalMode)
+    print(avgModes)
+    
+    
+    
+    print("\n\n")
+    print("### Partial Order Allignment Without Compression ###")
+    poaNonCompressed = partialOrderAllignment(seqs)
+    print(poaNonCompressed)
+    print(finalMedian)
+    print(smallbase)
+    print("\n\n")
+    print("### Average Alignment Score Without Compression ###")
+    print(seqs)
+    avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
+    print(avgMeanNonComp)
+    
+    
 
+def multipleRunwithGraph(seqLengthToCheck, howManyTimesEach):
+    data = {"comp": [],
+            "seqLength": [],
+            "value": []
+            }
+    
+    #toCheck = [100]
+    for checkNum in seqLengthToCheck:
+        meanToAppend = 0
+        modeToAppend = 0
+        medianToAppend = 0
+        nonCompToAppend = 0
+        for x in range(howManyTimesEach):
+            # List that stores all the mutated sequences
+            seqs = []
+            
+            # base sequence on which mutations are done
+            base = generate_sequence(checkNum)
+            
+            # Generating mutations on the base sequence
+            s1 = mutate(base, 0.1, 0.1)
+            s2 = mutate(base, 0.1, 0.1)
+            s3 = mutate(base, 0.1, 0.1)
+            
+            seqs.append(s1)
+            seqs.append(s2)
+            seqs.append(s3)
+            
+            # Partial Order Align the compressed mutated sequences
+            # The result is the consensus sequence of the compressed mutated sequences
+            poaCompressed = compressedPartialOrderAllignment(seqs)
+            
+            # Data type to store the sequences
+            # Key: the ID of the sequence
+            # Value: A tuple, where the first value of tuple is a string of unique basepairs of that sequence
+            # and the second value of tuple is an array of integers, where each integer corresponds to the 
+            # frequency of the unique basepairs in the first value.
+            homecompSeqs = {}
+            homoId = 0
+            for seq in seqs:
+                homecompSeqs[homoId] = homoCompress(seq)
+                homoId = homoId + 1
+            
+            # Pairwise Align adds the pairwise aligned sequences to the tuple in homocompSeqs
+            readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
+            finalMean = expansionMean(readyForExpansion, poaCompressed)
+            finalMedian = expansionMedian(readyForExpansion, poaCompressed)
+            finalMode = expansionMode(readyForExpansion, poaCompressed)
+            
+            avgMean = calcAvgScore(seqs, finalMean)
+            avgMedian = calcAvgScore(seqs, finalMedian)
+            avgMode = calcAvgScore(seqs, finalMode)
+            
+            poaNonCompressed = partialOrderAllignment(seqs)
+            avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
+            
+            meanToAppend += avgMean
+            medianToAppend += avgMedian 
+            modeToAppend += avgMode
+            nonCompToAppend += avgMeanNonComp
+        finalMean = meanToAppend/howManyTimesEach
+        finalMedian = medianToAppend/howManyTimesEach
+        finalMode = modeToAppend/howManyTimesEach
+        nonCompToAppend = nonCompToAppend/howManyTimesEach
+        data["comp"].append("Mean")
+        data["comp"].append("Median")
+        data["comp"].append("Mode")
+        data["comp"].append("NonCompressed")
+        data["seqLength"].append(checkNum)
+        data["seqLength"].append(checkNum)
+        data["seqLength"].append(checkNum)
+        data["seqLength"].append(checkNum)
+        data["value"].append(finalMean)
+        data["value"].append(finalMedian)
+        data["value"].append(finalMode)
+        data["value"].append(nonCompToAppend)
+    
+    
+    
+    
+    
+        
+    df = pd.DataFrame(data)
+    print(ggplot(df) + geom_bar(aes(x="seqLength", y="value", fill="comp"), stat = "identity", position = "dodge2"))
+
+
+singleRun(3, 100)
+#multipleRunwithGraph([100, 200], 5)
 
 
 

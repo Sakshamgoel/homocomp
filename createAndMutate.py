@@ -11,6 +11,7 @@ from skbio.alignment import global_pairwise_align_nucleotide
 from skbio import TabularMSA, DNA
 import statistics
 from scipy.stats import poisson
+from Bio import SeqIO
 
 import pandas as pd
 import math
@@ -18,17 +19,36 @@ import math
 
 from plotnine import *
 from plotnine.data import *
+from simplesam import Reader, Writer
 #%matplotlib inline
 
 
 #np.random.seed(seed=2) #test for bottom string dash
 #np.random.seed(seed=3) #test for top string dash/very bad allignment
 #np.random.seed(seed=4) ##test for top string dash/mismatch
-
+#np.random.seed(seed=5666666) ##test for small global allign
 
 
 def generate_sequence(n):
     return("".join(np.random.choice(["A","C","G","T"], n)))
+
+def readFastq(input_file):
+    seqs = []
+    fasta_sequences = SeqIO.parse(open(input_file),'fastq')
+    for fasta in fasta_sequences:
+        name, sequence = fasta.id, str(fasta.seq)
+        seqs.append(sequence)
+    return seqs
+
+def readSam(input_file):
+    in_file = open(input_file, 'r')
+    in_sam = Reader(in_file)
+    seqs = []
+    for allign in in_sam:
+        if len(allign.seq) > 480:
+            seqs.append(allign.seq)
+            
+    return seqs
 
 def mutate(str, snp_rate, indel_rate):
     x = [c for c in str]
@@ -50,14 +70,16 @@ def mutate(str, snp_rate, indel_rate):
 
 
 def mutatePolymerComp(str, snp_rate, indel_rate):
-    x = [c for c in str]
+    firstMutation = mutate(str, snp_rate, indel_rate)
+    x = [c for c in firstMutation]
+    #x = [c for c in str]
     i = 0
     finalStr = ""
     while i < len(x):
-        starter = str[i]
+        starter = firstMutation[i]
         poisMean = 1
         p = i + 1
-        while p < len(str) and str[i] == str[p]:
+        while p < len(firstMutation) and firstMutation[i] == firstMutation[p]:
             p = p + 1
             i = i + 1
             poisMean = poisMean + 1
@@ -66,8 +88,7 @@ def mutatePolymerComp(str, snp_rate, indel_rate):
         for y in range(0, charNumToAdd[0]):
             finalStr = finalStr + starter
         i = i + 1
-    print(str)
-    print(finalStr)
+
     return(finalStr)
 
 
@@ -98,38 +119,59 @@ def globalPariwiseAllignment(seqsToAllign):
                     num3 = matrix[x-1, y]-1
                     num4 = matrix[x, y-1] -1
                     matrix[x, y] = max(num2,num3,num4)
-           
+        #print(matrix)
         np.set_printoptions(suppress = True)
         backR = len(botSeq)
         backC = len(topSeq)
         allignSeqBot = ""
         allignSeqTop = ""
         while backR > 0 or backC > 0:
-            maxNum = []
-            maxNum.append(matrix[backR-1, backC-1])
-            maxNum.append(matrix[backR-1, backC])
-            maxNum.append(matrix[backR, backC-1])
-            #print(matrix[backX, backY-1])
-            maxToGo = max(maxNum)
-            if (maxToGo == matrix[backR-1, backC-1]):
-                allignSeqBot = botSeq[backR-1] + allignSeqBot 
-                allignSeqTop = topSeq[backC-1] + allignSeqTop 
-                backR-=1
-                backC-=1
-            elif (maxToGo == matrix[backR, backC-1]):
-                allignSeqBot = "-" + allignSeqBot 
-                allignSeqTop = topSeq[backC-1] + allignSeqTop
-                backC-=1
+            #print("backR ", backR)
+            #print("backC ", backC)
+            #print("\n\n")
+            if (backR > 0 and backC > 0):
+                maxNum = []
+                maxNum.append(matrix[backR-1, backC-1])
+                maxNum.append(matrix[backR-1, backC])
+                maxNum.append(matrix[backR, backC-1])
+                maxToGo = max(maxNum)
+                if (maxToGo == matrix[backR-1, backC-1]):
+                    allignSeqBot = botSeq[backR-1] + allignSeqBot 
+                    allignSeqTop = topSeq[backC-1] + allignSeqTop 
+                    backR-=1
+                    backC-=1
+                elif (maxToGo == matrix[backR, backC-1]):
+                    allignSeqBot = "-" + allignSeqBot 
+                    allignSeqTop = topSeq[backC-1] + allignSeqTop
+                    backC-=1
+                else:
+                    allignSeqBot = botSeq[backR-1] + allignSeqBot 
+                    allignSeqTop = "-" + allignSeqTop 
+                    backR-=1
+                
+                
             else:
-                allignSeqBot = botSeq[backR-1] + allignSeqBot 
-                allignSeqTop = "-" + allignSeqTop 
-                backR-=1
+                if (backR == 0):
+                    while backC >0:
+                        allignSeqBot = "-" + allignSeqBot 
+                        allignSeqTop = topSeq[backC-1] + allignSeqTop
+                        backC-=1
+                else:
+                    while backR >0:
+                        #print("backR ", backR)
+                        #print(botSeq[backR-1])
+                        allignSeqBot = botSeq[backR-1] + allignSeqBot 
+                        allignSeqTop = "-" + allignSeqTop
+                        backR-=1
+                        
         returnTup = ([allignSeqTop, allignSeqBot], matrix[len(botSeq), len(topSeq)])
-        #print(allignSeqTop)
-        #print(allignSeqBot)
         return returnTup
 #seqs = ["ATCAGTGTAT", "TCTGTGTAT"]
 #seqs = ["GCAGTC", "GACTC"]
+#seqs = ["GCGT", "CGT"]
+#seqs = ["GCT", "CTGCTG"]
+#seqs = ["CTGCTG", "GCT"]
+#seqs = ["CTGCTG", "GCTCT"]
 #globalPariwiseAllignment(seqs)
 #print()
 
@@ -197,19 +239,16 @@ def partialOrderAllignment(seqs):
        
        
 def pairwiseAlign(homecompSeqs, consenSeq):
+    print(consenSeq)
     for id in homecompSeqs:
         #alignment = global_pairwise_align_nucleotide(DNA(consenSeq), DNA(homecompSeqs[id][0]))
         alignment = globalPariwiseAllignment([consenSeq, homecompSeqs[id][0]])
         homecompSeqs[id] = homecompSeqs[id] + ([str(alignment[0][0]), str(alignment[0][1])],)
-        print(alignment[0][0])
-        print(alignment[0][1])
-        print(alignment[1])
-        print("\n")
     return homecompSeqs
     
 
 def expansionMean(toExpandWith, consenSeq):
-
+    print(toExpandWith)
     locDict = {}
     for align in toExpandWith:
         locArray = []
@@ -248,12 +287,18 @@ def expansionMean(toExpandWith, consenSeq):
                  
                     #print(toExpandWith[key][1][locDict[key][base]])
                     numToDivide = numToDivide + toExpandWith[key][1][locDict[key][base]]
-                    count += 1
+                count += 1
         else:
             numToDivide = 0
             count = 0
             for key in locDict:
                 if locDict[key][base] != -1:
+                    # print("toExpandWith ", toExpandWith)
+                    # print("key ", key)
+                    # print("locDict ", locDict)
+                    # print("key ", key)
+                    # print("base ", base)
+                    # print("locDict[key][base] ", locDict[key][base])
                     numToDivide = numToDivide + toExpandWith[key][1][locDict[key][base]]
                     count += 1
         finalBaseLength = 0
@@ -301,6 +346,8 @@ def expansionMedian(toExpandWith, consenSeq):
         for key in locDict:
             if locDict[key][base] != -1:
                 medianArr.append(toExpandWith[key][1][locDict[key][base]])
+            #else:
+                #medianArr.append(0)   
         finalBaseLength = 0
         if (len(medianArr) > 0):
             finalBaseLength = statistics.median(medianArr)
@@ -345,6 +392,8 @@ def expansionMode(toExpandWith, consenSeq):
         for key in locDict:
             if locDict[key][base] != -1:
                 modeArr.append(toExpandWith[key][1][locDict[key][base]])
+            #else:
+                #modeArr.append(0)
         finalBaseLength = 0
         if (len(modeArr) > 0):
             finalBaseLength = statistics.median(modeArr)
@@ -367,12 +416,21 @@ def calcAvgScore(seqs, allignmentToTest):
 
     
     
-def singleRun(howManySeqs, length):
+def singleRun(howManySeqs, length, mutationType):
+    data = {"comp": [],
+            "seqLength": [],
+            "value": []
+            }
     seqs=[]
+    
     smallbase = generate_sequence(length) 
     for x in range(howManySeqs):
-        s1 = mutatePolymerComp(smallbase, 0.1, 0.1)
+        if (mutationType == "homo"):
+            s1 = mutatePolymerComp(smallbase, 0.05, 0.05)
+        else:
+            s1 = mutate(smallbase, 0.1, 0.1)
         seqs.append(s1)
+    print(seqs)
         
     
     
@@ -396,11 +454,10 @@ def singleRun(howManySeqs, length):
     
     
     print("### Consensus Sequence Before Expansion ###")
-    print(poaCompressed)
     print("\n\n")
-    print(seqs)
     print("\n\n")
     print("### GLOBAL PAIRWISE ALIGN ###")
+    
     readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
     
     
@@ -422,18 +479,15 @@ def singleRun(howManySeqs, length):
     
     
     print("### Average Alignment Score Compressed Mean ###")
-    print(seqs)
     avgMean = calcAvgScore(seqs, finalMean)
     print(avgMean)
     
     print("### Average Alignment Score Compressed Median ###")
-    print(seqs)
     avgMedian = calcAvgScore(seqs, finalMedian)
     print(avgMedian)
     
     
     print("### Average Alignment Score Compressed Mode ###")
-    print(seqs)
     avgModes = calcAvgScore(seqs, finalMode)
     print(avgModes)
     
@@ -451,9 +505,28 @@ def singleRun(howManySeqs, length):
     avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
     print(avgMeanNonComp)
     
+    data["comp"].append("Mean")
+    data["comp"].append("Median")
+    data["comp"].append("Mode")
+    data["comp"].append("NonCompressed")
+    data["seqLength"].append(length)
+    data["seqLength"].append(length)
+    data["seqLength"].append(length)
+    data["seqLength"].append(length)
+    data["value"].append(avgMean)
+    data["value"].append(avgMedian)
+    data["value"].append(avgModes)
+    data["value"].append(avgMeanNonComp)
+    df = pd.DataFrame(data)
+    print(ggplot(df) + geom_bar(aes(x="seqLength", y="value", fill="comp"), stat = "identity", position = "dodge2"))
+
+    
+    
+    
+    
     
 
-def multipleRunwithGraph(seqLengthToCheck, howManyTimesEach):
+def multipleRunwithGraph(seqLengthToCheck, howManySequences, howManyTimesEach, mutationType):
     data = {"comp": [],
             "seqLength": [],
             "value": []
@@ -472,14 +545,13 @@ def multipleRunwithGraph(seqLengthToCheck, howManyTimesEach):
             # base sequence on which mutations are done
             base = generate_sequence(checkNum)
             
-            # Generating mutations on the base sequence
-            s1 = mutate(base, 0.1, 0.1)
-            s2 = mutate(base, 0.1, 0.1)
-            s3 = mutate(base, 0.1, 0.1)
             
-            seqs.append(s1)
-            seqs.append(s2)
-            seqs.append(s3)
+            for x in range(howManySequences):
+                if (mutationType == "homo"):
+                    s1 = mutatePolymerComp(base, 0.05, 0.05)
+                else:
+                    s1 = mutate(base, 0.1, 0.1)
+                seqs.append(s1)
             
             # Partial Order Align the compressed mutated sequences
             # The result is the consensus sequence of the compressed mutated sequences
@@ -508,7 +580,10 @@ def multipleRunwithGraph(seqLengthToCheck, howManyTimesEach):
             
             poaNonCompressed = partialOrderAllignment(seqs)
             avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
-            
+            print("avgMean", avgMean)
+            print("avgMedian", avgMedian)
+            print("avgMode", avgMode)
+            print("avgMeanNonComp", avgMeanNonComp)
             meanToAppend += avgMean
             medianToAppend += avgMedian 
             modeToAppend += avgMode
@@ -539,8 +614,147 @@ def multipleRunwithGraph(seqLengthToCheck, howManyTimesEach):
     print(ggplot(df) + geom_bar(aes(x="seqLength", y="value", fill="comp"), stat = "identity", position = "dodge2"))
 
 
-singleRun(3, 100)
-#multipleRunwithGraph([100, 200], 5)
+
+
+def runWithFastaSeqs(fastq_file):
+    data = {"comp": [],
+            "seqLength": [],
+            "value": []
+            }
+    seqs=[]
+    seqs = readFastq(fastq_file)
+    seqs.pop(0)
+    length = len(seqs[0])
+    poaCompressed = compressedPartialOrderAllignment(seqs)
+    
+    homecompSeqs = {}
+    homoId = 0
+    for seq in seqs:
+        #print(homoCompress(seq)[0])
+        #print(homoCompress(seq)[1])
+        homecompSeqs[homoId] = homoCompress(seq)
+        homoId = homoId + 1
+    
+    
+
+    
+    readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
+
+    finalMean = expansionMean(readyForExpansion, poaCompressed)
+
+    finalMedian = expansionMedian(readyForExpansion, poaCompressed)
+
+    finalMode = expansionMode(readyForExpansion, poaCompressed)
+
+    avgMean = calcAvgScore(seqs, finalMean)
+
+    avgMedian = calcAvgScore(seqs, finalMedian)
+
+    avgModes = calcAvgScore(seqs, finalMode)
+
+    poaNonCompressed = partialOrderAllignment(seqs)
+    avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
+    
+    data["comp"].append("Mean")
+    data["comp"].append("Median")
+    data["comp"].append("Mode")
+    data["comp"].append("NonCompressed")
+    data["seqLength"].append(length)
+    data["seqLength"].append(length)
+    data["seqLength"].append(length)
+    data["seqLength"].append(length)
+    data["value"].append(avgMean)
+    data["value"].append(avgMedian)
+    data["value"].append(avgModes)
+    data["value"].append(avgMeanNonComp)
+    df = pd.DataFrame(data)
+    print(ggplot(df) + geom_bar(aes(x="seqLength", y="value", fill="comp"), stat = "identity", position = "dodge2"))
+    
+    
+def runWithSamSeqs():
+    data = {"comp": [],
+            "seqLength": [],
+            "value": []
+            }
+    meanToAppend = 0
+    modeToAppend = 0
+    medianToAppend = 0
+    nonCompToAppend = 0
+    for x in range(1, 10):
+        seqs=[]
+        seqs = readSam("Reads/sd_" + str(x) + ".sam")
+        length = 500
+    
+    
+        poaCompressed = compressedPartialOrderAllignment(seqs)
+    
+        homecompSeqs = {}
+        homoId = 0
+        for seq in seqs:
+            homecompSeqs[homoId] = homoCompress(seq)
+            homoId = homoId + 1
+    
+    
+
+    
+        readyForExpansion = pairwiseAlign(homecompSeqs, poaCompressed)
+
+        finalMean = expansionMean(readyForExpansion, poaCompressed)
+
+        finalMedian = expansionMedian(readyForExpansion, poaCompressed)
+
+        finalMode = expansionMode(readyForExpansion, poaCompressed)
+
+        avgMean = calcAvgScore(seqs, finalMean)
+
+        avgMedian = calcAvgScore(seqs, finalMedian)
+
+        avgMode = calcAvgScore(seqs, finalMode)
+
+        poaNonCompressed = partialOrderAllignment(seqs)
+        avgMeanNonComp = calcAvgScore(seqs, poaNonCompressed)
+    
+    
+    
+    
+    
+    
+        meanToAppend += avgMean
+        medianToAppend += avgMedian 
+        modeToAppend += avgMode
+        nonCompToAppend += avgMeanNonComp
+    finalMean = meanToAppend/10
+    finalMedian = medianToAppend/10
+    finalMode = modeToAppend/10
+    nonCompToAppend = nonCompToAppend/10
+    
+    print("finalMean: ", finalMean)
+    print("finalMedian: ", finalMedian)
+    print("finalMode: ", finalMode)
+    print("nonCompToAppend: ", nonCompToAppend)
+    
+    data["comp"].append("Mean")
+    data["comp"].append("Median")
+    data["comp"].append("Mode")
+    data["comp"].append("NonCompressed")
+    data["seqLength"].append(length)
+    data["seqLength"].append(length)
+    data["seqLength"].append(length)
+    data["seqLength"].append(length)
+    data["value"].append(finalMean)
+    data["value"].append(finalMedian)
+    data["value"].append(finalMode)
+    data["value"].append(nonCompToAppend)
+    df = pd.DataFrame(data)
+    print(ggplot(df) + geom_bar(aes(x="seqLength", y="value", fill="comp"), stat = "identity", position = "dodge2"))
+
+#singleRun(3, 5, "homo")
+#multipleRunwithGraph([100], 12, 10, "homo")
+#runWithFastaSeqs("myreads.fastq")
+#runWithSamSeqs("sd_0001.sam")
+#seqs = readSam(
+runWithSamSeqs()
+
 
 
 
